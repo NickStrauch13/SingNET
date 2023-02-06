@@ -30,7 +30,7 @@ def select_all_tasks(conn, query):
 
 
 c = create_connection('birdrecordingdb.sqlite')
-select_all_tasks(c, "SELECT en,count(*) FROM BirdRecordings GROUP BY en HAVING cnt='Singapore' ")
+select_all_tasks(c, "SELECT count(*) FROM BirdRecordings WHERE filename LIKE '%.mp3'")
 
 # Quality Breakdown 14128 A, 24083 B, 15281 C, 4627 D, 1199 E, 2425 'no score',
 
