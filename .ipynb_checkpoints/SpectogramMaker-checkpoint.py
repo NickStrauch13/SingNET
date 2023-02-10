@@ -39,8 +39,9 @@ def getSpectroFromWav(audio_clips):
             plt.xlabel("")
             plt.ylabel("")
             plt.axis("off")
+            plt.margins(x=0)
             #plt.colorbar()
-            plt.savefig("data/costa_rica/spectrogram/"+audio_clips[i].replace("wav", "jpg"), bbox_inches="tight")
+            plt.savefig("data/costa_rica/spectrogram/"+audio_clips[i].replace("wav", "jpg"), bbox_inches="tight", pad_inches=0)
             plt.close()
             print(i*1.0/len(audio_clips))
 # audio_fpath = "data/costa_rica/wav/" #use this line for convertmp3sToWav
