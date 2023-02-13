@@ -41,7 +41,11 @@ def getSpectroFromWav(audio_clips):
             plt.axis("off")
             plt.margins(x=0)
             #plt.colorbar()
-            plt.savefig("data/costa_rica/spectrogram/"+audio_clips[i].replace("wav", "jpg"), bbox_inches="tight", pad_inches=0)
+            dir_name = "_".join(audio_clips[i].split("_")[:-2])  #This line removes the numbers from the end of the filenames
+            dir_path = "data/costa_rica/spectrogram/"+dir_name
+            if not os.path.exists(dir_path):
+                os.mkdir(dir_path)
+            plt.savefig(dir_path+"/"+audio_clips[i].replace("wav", "jpg"), bbox_inches="tight", pad_inches=0)
             plt.close()
             print(i*1.0/len(audio_clips))
 # audio_fpath = "data/costa_rica/wav/" #use this line for convertmp3sToWav
