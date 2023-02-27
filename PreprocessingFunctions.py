@@ -136,7 +136,7 @@ def get_spectro_from_wav(audio_clips, wav_path, export_path, make_subdirs=False)
             plt.close()
 
             
-def wav_to_np(wav_file, normalized=False):
+def wav_to_np(wav_file, normalized=False):  # Sus af
     """WAV to numpy array"""
     a = pydub.AudioSegment.from_wav(wav_file)
     y = np.array(a.get_array_of_samples())
