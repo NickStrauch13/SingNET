@@ -30,6 +30,11 @@ def np_to_mp3(dest_file, sr, x, normalized=False):
     song = pydub.AudioSegment(y.tobytes(), frame_rate=sr, sample_width=2, channels=channels)
     song.export(dest_file, format="mp3", bitrate="320k")
     
+    
+def convert_wav_to_mp3(wav_file_path, export_path):
+    song = AudioSegment.from_file(wav_file_path)
+    song.export(export_path, format="mp3")
+
 
 # Finds the max-sum window (sub array) in a given np array.
 #
@@ -173,5 +178,6 @@ def convert_long_wav_to_spectro_windows(wav_file_path, export_path, file_name_ro
     
     audio_clips = os.listdir(export_path + "wav")
     get_spectro_from_wav(audio_clips, export_path+"wav/", export_path+"spectrogram/")
+    
     
     
