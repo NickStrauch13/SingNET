@@ -163,7 +163,8 @@ def np_to_wav(dest_file, sr, x, normalized=False):
 # file_name_root: the name of your desired saved files. They will be saved like "file_name_root_27.wav" or "file_name_root_33.jpg"
 # window_size: length of extracted windows in seconds
 def convert_long_wav_to_spectro_windows(wav_file_path, export_path, file_name_root, window_size=5):
-    sr, audio_array = wav_to_np(wav_file_path)
+    convert_wav_to_mp3(wav_file_path, export_path+"mp3version.mp3")
+    sr, audio_array = mp3_to_np(export_path+"mp3version.mp3")
     if len(audio_array.shape) == 2:
         audio_array = np.mean(audio_array, axis=1)
     windows = extract_best_windows(audio_array, sr, window_size)
