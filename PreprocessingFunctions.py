@@ -79,7 +79,7 @@ def find_max_window(array, sr, samples_per_window, stride_coeff=.5):
 # window_size = desired length of windows in seconds
 #
 # Returns a list of numpy arrays (windows)
-def extract_best_windows(audio_array, sr, max_power, window_size=5):
+def extract_best_windows(audio_array, sr, max_power, window_size=5, depth=0):
     samples_per_window = sr * window_size
     if samples_per_window > len(audio_array):
         return []
@@ -90,8 +90,12 @@ def extract_best_windows(audio_array, sr, max_power, window_size=5):
     max_window = audio_array[start:end]
     if power > .4*max_power:
         ret.append(max_window)
-    ret.extend(extract_best_windows(audio_array[0:start], sr, max_power=max_power, window_size=5))
-    ret.extend(extract_best_windows(audio_array[end:], sr, max_power=max_power, window_size=5))
+    if depth > 200:
+        return ret
+    ret.extend(extract_best_windows(audio_array[0:start], sr, max_power=max_power, window_size=5, depth=depth+1))
+    if depth > 200:
+        return ret
+    ret.extend(extract_best_windows(audio_array[end:], sr, max_power=max_power, window_size=5, depth=depth+1))
     return ret
 
 
