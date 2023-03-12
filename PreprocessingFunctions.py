@@ -99,15 +99,18 @@ def extract_best_windows(audio_array, sr, max_power, window_size=5, depth=0):
     return ret
 
 
-# audio_clips: list or array of desired wav file names  (typically created using os.listdir(directory_path))
+# audio_clips: list or array of desired mp3 file names  (typically created using os.listdir(directory_path))
 # mp3_path: path to diectory containing all desired mp3's to be converted. Should end with /
 # export_path: path to directory to which all wav files will be exported to. Should end with /
 def convert_mp3s_to_wav(audio_clips, mp3_path, export_path):
     for i in range(len(audio_clips)):
         if audio_clips[i].endswith(".mp3"):
-            tempPath = mp3_path + audio_clips[i]
-            song = AudioSegment.from_mp3(tempPath)
-            song.export(export_path+audio_clips[i].replace("mp3","wav"))
+            try:
+                tempPath = mp3_path + audio_clips[i]
+                song = AudioSegment.from_mp3(tempPath)
+                song.export(export_path+audio_clips[i].replace("mp3","wav"))
+            except:
+                print(f"{audio_clips[i]} failed to convert")
        
     
 # audio_clips: list or array of desired wav filepaths  (typically created using os.listdir(directory_path))
