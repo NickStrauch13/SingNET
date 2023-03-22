@@ -118,32 +118,40 @@ def convert_mp3s_to_wav(audio_clips, mp3_path, export_path):
 # export_path: path to directory to which all spectrograms will be exported to. Should end with /
 # make_subdirs: Very specific usecase. Will make subdirs useful for training splits if following our naming convention.
 def get_spectro_from_wav(audio_clips, wav_path, export_path, make_subdirs=False):
-    for i in range(len(audio_clips)):
+    num_files = len(audio_clips)
+    c=0
+    for i in range(num_files):
         if audio_clips[i].endswith(".wav"):
-            tempPath = wav_path + audio_clips[i]
-            x, sr = librosa.load(tempPath, sr=None)
-            # X = librosa.stft(x, n_fft=2048)
-            # Xdb = librosa.amplitude_to_db(abs(X))  ## Use These three lines for spectrogram
-            # librosa.util.normalize(Xdb)
-            Z = librosa.feature.melspectrogram(y=x,sr=sr)
-            Zdb = librosa.amplitude_to_db(abs(Z))  ## Use these three lines for MEL spectrogram
-            librosa.util.normalize(Zdb)## I prefer MEL it is significantly faster and seems to give more interesting results
-            plt.figure(figsize=(14, 5))
-            librosa.display.specshow(Zdb, sr=sr, x_axis='time', y_axis='hz',cmap='viridis')
-            plt.title("")
-            plt.xlabel("")
-            plt.ylabel("")
-            plt.axis("off")
-            plt.margins(x=0)
-            dir_path = export_path
-            if make_subdirs:
-                dir_name = "_".join(audio_clips[i].split("_")[:-2])  #This line removes the numbers from the end of the filenames
-                dir_path = export_path+dir_name
-                if not os.path.exists(dir_path):
-                    os.mkdir(dir_path)
-                dir_path = dir_path + "/"
-            plt.savefig(dir_path+audio_clips[i].replace("wav", "jpg"), bbox_inches="tight", pad_inches=0)
-            plt.close()
+            try:
+                tempPath = wav_path + audio_clips[i]
+                x, sr = librosa.load(tempPath, sr=None)
+                # X = librosa.stft(x, n_fft=2048)
+                # Xdb = librosa.amplitude_to_db(abs(X))  ## Use These three lines for spectrogram
+                # librosa.util.normalize(Xdb)
+                Z = librosa.feature.melspectrogram(y=x,sr=sr)
+                Zdb = librosa.amplitude_to_db(abs(Z))  ## Use these three lines for MEL spectrogram
+                librosa.util.normalize(Zdb)## I prefer MEL it is significantly faster and seems to give more interesting results
+                plt.figure(figsize=(14, 5))
+                librosa.display.specshow(Zdb, sr=sr, x_axis='time', y_axis='hz',cmap='viridis')
+                plt.title("")
+                plt.xlabel("")
+                plt.ylabel("")
+                plt.axis("off")
+                plt.margins(x=0)
+                dir_path = export_path
+                if make_subdirs:
+                    dir_name = "_".join(audio_clips[i].split("_")[:-2])  #This line removes the numbers from the end of the filenames
+                    dir_path = export_path+dir_name
+                    if not os.path.exists(dir_path):
+                        os.mkdir(dir_path)
+                    dir_path = dir_path + "/"
+                plt.savefig(dir_path+audio_clips[i].replace("wav", "jpg"), bbox_inches="tight", pad_inches=0)
+                plt.close()
+                c+=1
+                if c % 250 == 0:
+                    print(round(c/num_files, 5))
+            except:
+                print(f"Failed to make spectrogram for {audio_clips[i]}")
 
             
 def wav_to_np(wav_file, normalized=False):  # Sus af

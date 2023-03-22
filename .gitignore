@@ -6,3 +6,6 @@ data/costa_rica/wav/
 data/mp3/
 data/mp3_windows/
 data/wav_windows/
+data/dn_wav_windows/
+data/spectrograms/
+data/sorted_spectrograms/
