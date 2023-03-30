@@ -9,3 +9,4 @@ data/wav_windows/
 data/dn_wav_windows/
 data/spectrograms/
 data/sorted_spectrograms/
+*.pyc
