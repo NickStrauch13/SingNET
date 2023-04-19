@@ -1,11 +1,4 @@
-data/costa_rica/mp3/
-data/costa_rica/mp3_windows/
-data/costa_rica/spectrogram/
-data/costa_rica/wav/
-.ipynb_checkpoints
-data/mp3/
-data/mp3_windows/
-data/wav_windows/
-data/dn_wav_windows/
-data/spectrograms/
-data/sorted_spectrograms/
+.ipynb_checkpoints/
+data/
+.env/
+
