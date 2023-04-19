@@ -7,6 +7,7 @@ import librosa
 import librosa.display
 from pydub import AudioSegment
 import matplotlib.pyplot as plt
+from PIL import Image
 
 def mp3_to_np(mp3_file, normalized=False):
     """MP3 to numpy array"""
@@ -198,5 +199,85 @@ def convert_long_wav_to_spectro_windows(wav_file_path, export_path, file_name_ro
     audio_clips = os.listdir(export_path + "wav")
     get_spectro_from_wav(audio_clips, export_path+"wav/", export_path+"spectrogram/")
     
-    
-    
+
+# Culls a dataset 
+#
+# original_data_path: path to original dataset directory
+# new_data_path: path to new dataset directory
+# max_per_class: maximum number of samples per class after culling
+def reduce_dataset(original_data_path, new_data_path, max_per_class=30):
+    # Create the new directory if it doesn't exist
+    if not os.path.exists(new_data_path):
+        os.mkdir(new_data_path)
+
+    # Loop through each subdirectory in the original directory
+    for subdir in os.listdir(original_data_path):
+        subdir_path = os.path.join(original_data_path, subdir)
+        # Create the corresponding subdirectory in the new directory
+        new_subdir_path = os.path.join(new_data_path, subdir)
+        if not os.path.exists(new_subdir_path):
+            os.mkdir(new_subdir_path)
+        # Get a list of all the jpg files in the subdirectory
+        jpg_files = [f for f in os.listdir(subdir_path) if f.endswith('.jpg')]
+        # Choose a random subset of the jpg files
+        num_files_to_copy = min(len(jpg_files), max_per_class) 
+        files_to_copy = random.sample(jpg_files, num_files_to_copy)
+        # Copy the selected files to the corresponding subdirectory in the new directory
+        for file in files_to_copy:
+            src_path = os.path.join(subdir_path, file)
+            dst_path = os.path.join(new_subdir_path, file)
+            shutil.copy(src_path, dst_path)
+            
+
+# compute some statistics about a dataset
+#
+#dataloader: dataset
+def compute_class_stats(dataloader):
+    class_samples = {}
+    total_samples = 0
+    for _, labels in dataloader:
+        total_samples += len(labels)
+        for label in labels:
+            if label.item() not in class_samples:
+                class_samples[label.item()] = 1
+            else:
+                class_samples[label.item()] += 1
+
+    num_classes = len(class_samples)
+    class_samples = [class_samples[i] for i in range(num_classes)]
+
+    return num_classes, total_samples, class_samples
+
+
+# Reduce the resolution of an image down to 244x244
+#
+# input_dir: direcotry with subdirs of jpg's
+# output_dir: output directory for 244x244 images
+# min_num_files: minimum number of files in a sub-directory for the downsampling to be applied
+def downsample_images(input_dir, output_dir, min_num_files=-1):
+    # Recursively iterate over all subdirs in the input directory
+    for root, dirs, files in os.walk(input_dir):
+        if len(files) >= min_num_files:
+            for file in files:
+                # Check if the file is a JPEG image
+                if file.endswith('.jpg'):
+                    # Construct the input and output file paths
+                    input_path = os.path.join(root, file)
+                    output_path = input_path.replace(input_dir, output_dir)
+
+                    # Create the output directory if it doesn't exist
+                    output_subdir = os.path.dirname(output_path)
+                    if not os.path.exists(output_subdir):
+                        os.makedirs(output_subdir)
+
+                    # Load the image and downsample it
+                    img = Image.open(input_path)
+                    img_array = np.array(img)
+                    block_size = (img_array.shape[0] // 244, img_array.shape[1] // 244)
+                    img_array = img_array[:244 * block_size[0], :244 * block_size[1]]
+                    img_array = img_array.reshape((244, block_size[0], 244, block_size[1], 3))
+                    img_array = np.mean(img_array, axis=(1, 3)).astype(np.uint8)
+                    img = Image.fromarray(img_array)
+
+                    # Save the downsampled image
+                    img.save(output_path)
